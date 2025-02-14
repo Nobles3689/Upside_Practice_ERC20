@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./Pausable.sol";
 
-contract ERC20 is Pausable{
+contract ERC20 {
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approve(address indexed _from, address indexed _to, uint256 _value);
@@ -16,6 +16,8 @@ contract ERC20 is Pausable{
     string private symbol;
     uint8 private decimal;
 
+    bool private _paused;
+
     address private owner;
     mapping(address => uint256) public nonces;
     uint256 internal immutable INITIAL_CHAIN_ID;
@@ -27,6 +29,7 @@ contract ERC20 is Pausable{
         balances[msg.sender] = 100 ether;
         totalSupply = 100 ether;
         owner = msg.sender;
+        _paused = false;
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
@@ -35,7 +38,8 @@ contract ERC20 is Pausable{
         return balances[_owner];
     }
 
-    function transfer(address _to, uint256 _value) public virtual whenNotPaused returns (bool){
+    function transfer(address _to, uint256 _value) public virtual returns (bool){
+        require(!_paused);
         require(msg.sender != address(0), "transfer from the zero address");
         require(_to != address(0), "transfer to the zero address");
         require(balances[msg.sender] >= _value, "You don't have enough balance.");
@@ -48,7 +52,8 @@ contract ERC20 is Pausable{
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public virtual whenNotPaused returns (bool){
+    function transferFrom(address _from, address _to, uint256 _value) public virtual returns (bool){
+        require(!_paused);
         require(_from != address(0), "transfer from the zero address");
         require(_to != address(0), "transfer to the zero address");
         require(balances[_from] >= _value, "You don't have enough balance.");
@@ -63,7 +68,12 @@ contract ERC20 is Pausable{
 
     function pause() public{
         require(msg.sender == owner, "You are not owner");
-        _pause();
+        _paused = true;
+    }
+
+    function unpause() public{
+        require(msg.sender == owner, "You are not owner");
+        _paused = false;
     }
 
     function approve(address _to, uint256 _value) public virtual returns (bool){
