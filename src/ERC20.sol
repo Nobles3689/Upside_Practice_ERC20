@@ -7,7 +7,7 @@ contract ERC20 {
     event Approve(address indexed _from, address indexed _to, uint256 _value);
  
     mapping(address => uint256) private balances;//잔고
-    mapping(address => mapping(address=>uint256)) private allowances;//권한 허용 내역
+    mapping(address => mapping(address=>uint256)) private allowances;//인출 허용 내역
     uint256 private totalSupply;//총 금액
 
     string private name;//토큰 이름
