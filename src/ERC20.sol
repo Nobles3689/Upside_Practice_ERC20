@@ -19,15 +19,15 @@ contract ERC20 {
     address private owner;//토큰 주인
 
     //EIP-2612
-    mapping(address => uint256) public nonces;
-    uint256 internal immutable INITIAL_CHAIN_ID;
-    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
+    mapping(address => uint256) public nonces;//서명 발급 횟수
+    uint256 internal immutable INITIAL_CHAIN_ID;//토큰 생성시 체인 ID
+    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;//토큰 생성시 도메인 구분자
 
     constructor(string memory _name, string memory _symbol){
         //토큰 초기화
         name = _name;
         symbol = _symbol;
-        //setUp 위해서 100 ETH 지급
+        //setUp 위해서 초기 발행 100 ETH
         balances[msg.sender] = 100 ether;
         totalSupply = 100 ether;
         //토큰 오너설정
